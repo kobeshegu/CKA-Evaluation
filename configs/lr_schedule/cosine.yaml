@@ -1,0 +1,4 @@
+init_factor: 1.0
+warm_up_factor: 2.0
+end_factor: 1.0
+warm_up_kimg: 2000

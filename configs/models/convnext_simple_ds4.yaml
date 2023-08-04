@@ -1,0 +1,4 @@
+class_name: 'training.convnext.convnext_simple'
+ds_factor: 4
+depths: [1, 1, 1, 1]
+dims: [128, 256, 512, 1024]

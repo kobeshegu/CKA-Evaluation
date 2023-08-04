@@ -1,0 +1,4 @@
+class_name: torch.optim.AdamW
+betas: [0, 0.99]
+lr: 0.002
+weight_decay: 0.01
