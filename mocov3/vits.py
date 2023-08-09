@@ -11,7 +11,7 @@ from functools import partial, reduce
 from operator import mul
 
 from timm.models.vision_transformer import VisionTransformer, _cfg
-from timm.models.layers.helpers import to_2tuple
+from timm.layers.helpers import to_2tuple
 from timm.models.layers import PatchEmbed
 
 __all__ = [
