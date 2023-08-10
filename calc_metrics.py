@@ -100,7 +100,7 @@ def parse_comma_separated_list(s):
 @click.command()
 @click.pass_context
 @click.option('network_pkl', '--network', help='Network pickle filename or URL', default= None, metavar='PATH', show_default=True)
-@click.option('--metrics', help='Quality metrics', metavar='[NAME|A,B,C|none]', type=parse_comma_separated_list, default='fid50k_full', show_default=True)
+@click.option('--metrics', help='Quality metrics', metavar='[NAME|A,B,C|none]', type=parse_comma_separated_list, default='mixermlp_fid50k_full', show_default=True)
 @click.option('--data', help='Dataset to evaluate against  [default: look up]', default="D:/Z-kobeshegu/NeurIPS2023-rebuttal/random_50K_ffhq.zip", metavar='[ZIP|DIR]', show_default=True)
 @click.option('--generate', help='Generated dataset to evaluate', default="D:/Z-kobeshegu/NeurIPS2023-rebuttal/random_50K_ffhq.zip", metavar='[ZIP|DIR]', show_default=True)
 @click.option('--mirror', help='Enable dataset x-flips  [default: look up]', type=bool, default=1, metavar='BOOL', show_default=True)
@@ -109,7 +109,7 @@ def parse_comma_separated_list(s):
 @click.option('--resolution', help='resolution', type=int, default=256, metavar='INT', show_default=True)
 @click.option('--cache', help='whether to look up from cache', type=bool, default=0, metavar='BOOL', show_default=True)
 @click.option('--feature_save_flag', help='whether to save features', type=bool, default=0, metavar='BOOL', show_default=True)
-@click.option('--layers', help='Which layer to get features', type=parse_comma_separated_list, default='Mixed_7c', metavar='STRING', show_default=True)
+@click.option('--layers', help='Which layer to get features', type=parse_comma_separated_list, default='blocks.2', metavar='STRING', show_default=True)
 @click.option('--random', help='whether to use random for generate dataset', type=bool, default=False, metavar='BOOL', show_default=True)
 @click.option('--random_size', help='random_size', type=int, default=5000, metavar='INT', show_default=True)
 @click.option('--random_num', help='random_num', type=int, default=5, metavar='INT', show_default=True)

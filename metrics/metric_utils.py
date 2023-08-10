@@ -212,7 +212,11 @@ def get_feature_detector(url, opts, device=torch.device('cpu'), num_gpus=1, rank
     elif 'resmlp' in opts.feature_network:
         model_name = "resmlp_24_224_dino"
         detector = create_model(model_name, pretrained=True).to(device)
-        _feature_detector_cache[key]=detector  
+        _feature_detector_cache[key]=detector
+    elif 'mixer' in opts.feature_network:
+        model_name = "mixer_b16_224"
+        detector = create_model(model_name, pretrained=True).to(device)
+        _feature_detector_cache[key] = detector
     else:
         try:
             with dnnlib.util.open_url(url, verbose=(verbose and is_leader)) as f:
@@ -508,7 +512,7 @@ def pre_process(feature_network):
             transforms.ToTensor(),
             transforms.Normalize(NORMALIZE_MEAN, NORMALIZE_STD),
         ])
-    elif 'swin' in feature_network or 'resmlp' in feature_network:
+    elif 'swin' in feature_network or 'resmlp' or 'mixer' in feature_network:
         from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
         NORMALIZE_MEAN = IMAGENET_DEFAULT_MEAN
         NORMALIZE_STD = IMAGENET_DEFAULT_STD
@@ -567,7 +571,7 @@ def post_process(feature,opts):
                 #feature_cut=feature        
                 feature_cut=feature[:,1:,:]
             output=feature_cut.mean(dim=1)
-        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network or 'deit' in opts.feature_network:
+        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network or 'deit' in opts.feature_network or 'mixer' in opts.feature_network:
             output = feature.mean(dim=1)
         else:
             output=feature.mean([2,3])
@@ -585,7 +589,7 @@ def post_process(feature,opts):
             else:        
                 feature_cut=feature[:,1:,:]
                 output=torch.max(feature_cut, dim=2)[1]
-        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network or 'deit' in opts.feature_network:
+        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network or 'deit' in opts.feature_network or 'mixer' in opts.feature_network:
             output = feature.mean(dim=1)
         else:
             output = torch.max(feature, dim=2)[1]
@@ -604,7 +608,7 @@ def post_process(feature,opts):
             else:        
                 feature_cut=feature[:,1:,:]
                 output=torch.min(feature_cut, dim=2)[1]
-        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network  or 'deit' in opts.feature_network:
+        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network  or 'deit' in opts.feature_network or 'mixer' in opts.feature_network:
             output = feature.mean(dim=1)
         else:
             output = torch.min(feature, dim=2)[1]
@@ -622,7 +626,7 @@ def post_process(feature,opts):
             else:        
                 feature_cut=feature[:,1:,:]
                 output=torch.var(feature_cut,dim=2)
-        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network  or 'deit' in opts.feature_network:
+        elif 'swin' in opts.feature_network or 'resmlp' in opts.feature_network  or 'deit' in opts.feature_network or 'mixer' in opts.feature_network:
             output = feature.mean(dim=1)
         else:
             output=torch.var(feature, dim=[2,3])
