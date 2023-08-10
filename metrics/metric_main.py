@@ -1185,6 +1185,30 @@ def gmlp_cka50k_full(opts):
     return dict(gmlp_cka50k_full=gmlp_cka)
 
 @register_metric
+def maxxvitv2_rmlp_fid50k_full(opts):
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    opts.generate_dataset_kwargs.update(max_size=None, xflip=False)
+    opts.feature_network = 'maxxvitv2_rmlp_base_rw_224'
+    maxxvitv2_rmlp_fid = frechet_inception_distance.compute_fid(opts)
+    return dict(maxxvitv2_rmlp_fid50k_full=maxxvitv2_rmlp_fid)
+
+@register_metric
+def maxxvitv2_rmlp_kid50k_full(opts):
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    opts.generate_dataset_kwargs.update(max_size=None, xflip=False)
+    opts.feature_network = 'maxxvitv2_rmlp_base_rw_224'
+    maxxvitv2_rmlp_kid = kernel_inception_distance.compute_kid(opts)
+    return dict(maxxvitv2_rmlp_kid50k_full=maxxvitv2_rmlp_kid)
+
+@register_metric
+def maxxvitv2_rmlp_cka50k_full(opts):
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    opts.generate_dataset_kwargs.update(max_size=None, xflip=False)
+    opts.feature_network = 'maxxvitv2_rmlp_base_rw_224'
+    maxxvitv2_rmlp_cka = center_kernel_alignment_torch.compute_cka(opts)
+    return dict(maxxvitv2_rmlp_cka50k_full=maxxvitv2_rmlp_cka)
+
+@register_metric
 def f_inception_h_inception_cka10k_full(opts):
     opts.dataset_kwargs.update(max_size=None, xflip=False)
     feature_network_f=None
