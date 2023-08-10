@@ -100,7 +100,7 @@ def parse_comma_separated_list(s):
 @click.command()
 @click.pass_context
 @click.option('network_pkl', '--network', help='Network pickle filename or URL', default= None, metavar='PATH', show_default=True)
-@click.option('--metrics', help='Quality metrics', metavar='[NAME|A,B,C|none]', type=parse_comma_separated_list, default='mixermlp_fid50k_full', show_default=True)
+@click.option('--metrics', help='Quality metrics', metavar='[NAME|A,B,C|none]', type=parse_comma_separated_list, default='gmlp_fid50k_full', show_default=True)
 @click.option('--data', help='Dataset to evaluate against  [default: look up]', default="D:/Z-kobeshegu/NeurIPS2023-rebuttal/random_50K_ffhq.zip", metavar='[ZIP|DIR]', show_default=True)
 @click.option('--generate', help='Generated dataset to evaluate', default="D:/Z-kobeshegu/NeurIPS2023-rebuttal/random_50K_ffhq.zip", metavar='[ZIP|DIR]', show_default=True)
 @click.option('--mirror', help='Enable dataset x-flips  [default: look up]', type=bool, default=1, metavar='BOOL', show_default=True)

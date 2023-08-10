@@ -1161,6 +1161,30 @@ def mixermlp_cka50k_full(opts):
     return dict(mixermlp_cka50k_full=mixermlp_cka)
 
 @register_metric
+def gmlp_fid50k_full(opts):
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    opts.generate_dataset_kwargs.update(max_size=None, xflip=False)
+    opts.feature_network = 'gmlp_s16_224'
+    gmlp_fid = frechet_inception_distance.compute_fid(opts)
+    return dict(gmlp_fid50k_full=gmlp_fid)
+
+@register_metric
+def gmlp_kid50k_full(opts):
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    opts.generate_dataset_kwargs.update(max_size=None, xflip=False)
+    opts.feature_network = 'gmlp_s16_224'
+    gmlp_kid = kernel_inception_distance.compute_kid(opts)
+    return dict(gmlp_kid50k_full=gmlp_kid)
+
+@register_metric
+def gmlp_cka50k_full(opts):
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    opts.generate_dataset_kwargs.update(max_size=None, xflip=False)
+    opts.feature_network = 'gmlp_s16_224'
+    gmlp_cka = center_kernel_alignment_torch.compute_cka(opts)
+    return dict(gmlp_cka50k_full=gmlp_cka)
+
+@register_metric
 def f_inception_h_inception_cka10k_full(opts):
     opts.dataset_kwargs.update(max_size=None, xflip=False)
     feature_network_f=None
