@@ -166,3 +166,5 @@ pretrained_models/
 processed_data/
 checkpoints/
 tmp_real.jpg
+grad_cam/
+stats/

@@ -70,7 +70,7 @@ models=["inception","resnet50","clip","clip_vit_B16","clip_vit_B32","clip_vit_L1
         "moco_r50_church","moco_r50_afhq","moco_r50_lsunhorse",
         "moco_r50_lsunbedroom","moco_vit_i","moco_vit_f","moco_vit_s0","moco_vit_anime","moco_vit_celeba","moco_vit_church",
         "moco_vit_afhq","moco_vit_lsunhorse","moco_vit_lsunbedroom","convnext_base","vitcls_base_patch16_224",
-        "swintransformer", "repvgg", "resmlp", "deit"]
+        "swintransformer", "repvgg", "resmlp", "deit", "mixer_b16_224", "gmlp_s16_224", "maxxvitv2_rmlp_base_rw_224"]
 #layer1=["layer1","layer2","layer3","layer4"]
 layer1=["layer1.0","layer1.1","layer1.2","layer2.0","layer2.1","layer2.2","layer2.3","layer3.0","layer3.1","layer3.2","layer3.3","layer3.4","layer3.5","layer4.0","layer4.1","layer4.2"]
 #layer2=["Conv2d_4a_3x3","Mixed_5d","Mixed_6e","Mixed_7c"]
@@ -84,6 +84,7 @@ layer8=["stages.0","stages.1","stages.2","stages.3"]
 layer9 = ["blocks.0","blocks.1","blocks.2","blocks.3","blocks.4","blocks.5","blocks.6","blocks.7","blocks.8","blocks.9","blocks.10","blocks.11","blocks.12","blocks.13","blocks.14","blocks.15","blocks.16","blocks.17","blocks.18","blocks.19","blocks.20","blocks.21","blocks.22","blocks.23"]
 layer10=["layers.0","layers.1","layers.2","layers.3"]
 layer11 = ["stages.0","stages.1","stages.2","stages.3"]
+layergmlp = ["blocks.0","blocks.1","blocks.2","blocks.3","blocks.4","blocks.5","blocks.6","blocks.7","blocks.8","blocks.9","blocks.10","blocks.11","blocks.12","blocks.13","blocks.14","blocks.15","blocks.16","blocks.17","blocks.18","blocks.19","blocks.20","blocks.21","blocks.22","blocks.23","blocks.24","blocks.25","blocks.26","blocks.27","blocks.28","blocks.29"]
 cache_path = '~/.cache'
 _feature_detector_cache = dict()
 
@@ -177,7 +178,19 @@ def get_feature_detector(url, feature_network, device=torch.device('cpu'), num_g
     elif 'resmlp' in feature_network:
         model_name = "resmlp_24_224_dino"
         detector = create_model(model_name, pretrained=True).to(device)
-        _feature_detector_cache[key]=detector  
+        _feature_detector_cache[key]=detector
+    elif 'mixer' in feature_network:
+        model_name = "mixer_b16_224"
+        detector = create_model(model_name, pretrained=True).to(device)
+        _feature_detector_cache[key] = detector
+    elif 'gmlp' in feature_network:
+        model_name = "gmlp_s16_224"
+        detector = create_model(model_name, pretrained=True).to(device)
+        _feature_detector_cache[key] = detector
+    elif 'rmlp' in feature_network:
+        model_name = "maxxvitv2_rmlp_base_rw_224"
+        detector = create_model(model_name, pretrained=True).to(device)
+        _feature_detector_cache[key] = detector
     else:
         try:
             with dnnlib.util.open_url(url, verbose=(verbose and is_leader)) as f:
@@ -314,7 +327,7 @@ def pre_process(feature_network):
             transforms.ToTensor(),
             transforms.Normalize(NORMALIZE_MEAN, NORMALIZE_STD),
         ])
-    elif 'swin' in feature_network or 'resmlp' in feature_network:
+    elif 'swin' in feature_network or 'resmlp' in feature_network or 'mixer' in feature_network or 'gmlp' in feature_network or 'rmlp' in feature_network:
         from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
         NORMALIZE_MEAN = IMAGENET_DEFAULT_MEAN
         NORMALIZE_STD = IMAGENET_DEFAULT_STD
@@ -602,7 +615,7 @@ def grad_cam(new_generated_image,resolution,feature_network,layers,stats_path,nu
             else:
                 feature_post[layer]=feature_map[layer][:,1:,:]
             feature[layer] = feature_post[layer].mean(dim=1)
-        elif 'swin' in feature_network or 'resmlp' in feature_network:
+        elif 'swin' in feature_network or 'resmlp' in feature_network or 'mixer' in feature_network or 'gmlp' in feature_network or 'rmlp' in feature_network:
             feature[layer] = feature_map[layer].mean(dim=1)
         else:
             feature[layer] = feature_map[layer].mean(dim=[2,3])
@@ -775,7 +788,7 @@ def grad_cam(new_generated_image,resolution,feature_network,layers,stats_path,nu
                 heatmap = alpha * feature_map[layer][:,1:,:]
                 h_w=int(math.sqrt(int(heatmap.shape[1])))
                 heatmap=rearrange(heatmap,'b (h w) c -> b c h w', h=h_w)
-        elif 'swin' in feature_network or 'resmlp' in feature_network:
+        elif 'swin' in feature_network or 'resmlp' in feature_network or 'mixer' in feature_network or 'gmlp' in feature_network or 'rmlp' in feature_network:
             alpha = torch.mean(torch.pow(grads,2), axis=1,keepdim=True)
             heatmap = alpha * feature_map[layer]
             h_w=int(math.sqrt(int(heatmap.shape[1])))
@@ -848,6 +861,12 @@ def one_line(image_file,detectors,stats_path,num_gen,outdir,metrics,groups,group
             layers = layer9
         elif 'swin' in model:
             layers = layer10
+        elif 'mixer' in model:
+            layers = layer3
+        elif 'gmlp' in model:
+            layers = layergmlp
+        elif 'rmlp' in model:
+            layers = layer11
         else:
             layers = layer1
         return_res={}
