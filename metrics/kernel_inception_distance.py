@@ -147,7 +147,7 @@ def compute_kid(opts, rfid=False, detector_url=None):
             f.write(rew)
             if opts.save_stats is not None:
                 #save features
-                dir=f'{save_stats}/features'
+                dir=f'{opts.save_stats}/features'
                 model_path=os.path.join(dir,model)
                 path=os.path.join(model_path,layer)
                 os.makedirs(path, exist_ok=True)
