@@ -134,13 +134,13 @@ def get_feature_detector(url, opts, device=torch.device('cpu'), num_gpus=1, rank
     elif 'clip' in opts.feature_network:
         from training import clip
         if 'vit_B16' in opts.feature_network:
-            detector = clip.load('ViT-B/16', device='cpu', jit=False, download_root='/mnt/petrelfs/zhangyichi')[0].visual.eval().requires_grad_(False).to(device)
+            detector = clip.load('ViT-B/16', device='cpu', jit=False, download_root='./detector')[0].visual.eval().requires_grad_(False).to(device)
             _feature_detector_cache[key] = detector
         elif 'vit_B32' in opts.feature_network:
-            detector = clip.load('ViT-B/32', device='cpu', jit=False, download_root='/mnt/petrelfs/zhangyichi')[0].visual.eval().requires_grad_(False).to(device)
+            detector = clip.load('ViT-B/32', device='cpu', jit=False, download_root='./detector')[0].visual.eval().requires_grad_(False).to(device)
             _feature_detector_cache[key] = detector
         elif 'vit_L14' in opts.feature_network:
-            detector = clip.load('ViT-L/14', device='cpu', jit=False, download_root='/mnt/petrelfs/zhangyichi')[0].visual.eval().requires_grad_(False).to(device)
+            detector = clip.load('ViT-L/14', device='cpu', jit=False, download_root='./detector')[0].visual.eval().requires_grad_(False).to(device)
             _feature_detector_cache[key] = detector
         else:
             detector = clip.load('RN50', device='cpu', jit=False)[0].visual.eval().requires_grad_(False).to(device)
@@ -719,6 +719,7 @@ def compute_feature_stats_for_dataset(opts, detector_url, detector_kwargs, rel_l
             layer_items-=1
     hook={}
     # Activation_Initialize.
+    # import pdb; pdb.set_trace()
     if layer_items!=0:
         for layer in layers:
             if layer not in stats:
